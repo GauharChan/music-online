@@ -58,7 +58,7 @@ export default {
   height: 2rem;
   padding: 0rem 0.6rem;
   border-radius: 25px;
-  background-color: #7ecaec;
+  background-color: rgba(255, 255, 255, .5);
   .input {
     flex: 1;
     height: inherit;

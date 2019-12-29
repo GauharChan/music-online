@@ -5,12 +5,14 @@ import store from './store'
 import axios from 'axios'
 import '@/assets/reset.less'
 import '@/assets/font/iconfont.css'
-import { Drawer, Dialog } from 'element-ui'
+import Element from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
-Vue.use(Drawer)
-Vue.use(Dialog)
+Vue.use(Element)
+// Vue.use(Dialog)
+// Vue.use(Scrollbar)
 
 // 重写打印方法
 Vue.prototype.$print = (obj, type) => {
