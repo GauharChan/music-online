@@ -5,7 +5,6 @@
       <Search @getSongList="getSongList" />
     </header>
     <main class="flex">
-      <!-- <div class="music-list"> -->
       <el-scrollbar view-class="view-box" :native="false" wrap-class="music-list">
         <div class="item gh-between" v-for="(item, index) in songList" :key="index">
           <i class="iconfont icon-bofang" @click="handlePlay(item.id)"></i>
@@ -13,7 +12,6 @@
           <i class="iconfont icon-PlayIconFilled"></i>
         </div>
       </el-scrollbar>
-      <!-- </div> -->
       <!-- <div class="music-list">
         <div class="item gh-between" v-for="(item, index) in songList" :key="index">
           <i class="iconfont icon-bofang"></i>
@@ -25,10 +23,10 @@
       <div class="comment"></div>
     </main>
     <footer>
-      <audio ref="audio" autoplay :src="url" controls></audio>
+      <audio ref="audio" autoplay :src="url" controls @ended="handleNext"></audio>
     </footer>
     <!-- 抽屉 -->
-    <el-drawer title :visible.sync="drawer" :direction="direction" :with-header="false">
+    <el-drawer title :visible.sync="drawer" :direction="direction" :with-header="false" :before-close="handleClose">
       <div class="tips gh-center">暂时没有该资源！</div>
     </el-drawer>
   </div>
@@ -44,13 +42,15 @@ export default {
       songList: [],
       url: "",
       drawer: false,
-      direction: "ttb"
+      direction: "ttb",
+      playId: 0
     };
   },
   components: {
     Search
   },
   mounted() {
+    // 获取上一次搜索的歌曲列表
     let songList = localStorage.getItem("songList");
     if (!songList) {
       songList = "[]";
@@ -58,11 +58,15 @@ export default {
     this.songList = JSON.parse(songList);
   },
   methods: {
+    // 获取歌曲列表
     getSongList(list) {
       this.songList = list.songs;
+      this.$print(this.songList)
       localStorage.setItem("songList", JSON.stringify(this.songList));
     },
     handlePlay(id) {
+      // 把点击播放的id记录下来，为播下一首
+      this.playId = id
       this.$axios
         .get("https://autumnfish.cn/song/url", {
           params: {
@@ -75,8 +79,25 @@ export default {
             this.drawer = true;
             return;
           }
+          this.$refs.audio.volume = 0.5;
           this.$refs.audio.load();
         });
+    },
+    handleClose(done){
+      // 关闭抽屉
+      this.handleNext()
+      done()
+    },
+    handleNext(){  // 下一首
+      let that = this
+      this.songList.some((e,i) => {
+        if(e.id == that.playId){
+          // 如果是最后一首，则下一首播放列表第一首
+          let id = i == that.songList.length - 1 ? that.songList[0].id : that.songList[i + 1].id
+          that.handlePlay(id)
+          return true
+        }
+      })
     }
   }
 };
