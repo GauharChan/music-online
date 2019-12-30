@@ -19,14 +19,29 @@
           <i class="iconfont icon-PlayIconFilled"></i>
         </div>
       </div>-->
-      <div class="center-wall"></div>
+      <div class="center-wall">
+        <!-- 封面 -->
+        <div class="bi-box">
+          <img src="../assets/bi.png" alt />
+        </div>
+        <div class="cd-box">
+          <img class="cd-bg" src="../assets/center.png" alt />
+          <img class="album" :src="picUrl" alt />
+        </div>
+      </div>
       <div class="comment"></div>
     </main>
     <footer>
       <audio ref="audio" autoplay :src="url" controls @ended="handleNext"></audio>
     </footer>
     <!-- 抽屉 -->
-    <el-drawer title :visible.sync="drawer" :direction="direction" :with-header="false" :before-close="handleClose">
+    <el-drawer
+      title
+      :visible.sync="drawer"
+      :direction="direction"
+      :with-header="false"
+      :before-close="handleClose"
+    >
       <div class="tips gh-center">暂时没有该资源！</div>
     </el-drawer>
   </div>
@@ -43,7 +58,8 @@ export default {
       url: "",
       drawer: false,
       direction: "ttb",
-      playId: 0
+      playId: 0,
+      picUrl: require("../assets/default.png")
     };
   },
   components: {
@@ -61,12 +77,13 @@ export default {
     // 获取歌曲列表
     getSongList(list) {
       this.songList = list.songs;
-      this.$print(this.songList)
+      this.$print(this.songList);
       localStorage.setItem("songList", JSON.stringify(this.songList));
     },
     handlePlay(id) {
       // 把点击播放的id记录下来，为播下一首
-      this.playId = id
+      this.playId = id;
+      // 获取歌曲链接
       this.$axios
         .get("https://autumnfish.cn/song/url", {
           params: {
@@ -82,22 +99,47 @@ export default {
           this.$refs.audio.volume = 0.5;
           this.$refs.audio.load();
         });
+      // 获取封面
+      this.$axios
+        .get("https://autumnfish.cn/song/detail", {
+          params: {
+            ids: id
+          }
+        })
+        .then(res => {
+          let src = res.data.songs[0].al.picUrl;
+          src ? (this.picUrl = src) : (this.picUrl = "../assets/default.jpg");
+        });
+      // 获取评论
+      this.$axios
+        .get("https://autumnfish.cn/comment/hot?type=0", {
+          params: {
+            id
+          }
+        })
+        .then(res => {
+          console.log(res.data);
+        });
     },
-    handleClose(done){
+    handleClose(done) {
       // 关闭抽屉
-      this.handleNext()
-      done()
+      this.handleNext();
+      done();
     },
-    handleNext(){  // 下一首
-      let that = this
-      this.songList.some((e,i) => {
-        if(e.id == that.playId){
+    handleNext() {
+      // 下一首
+      let that = this;
+      this.songList.some((e, i) => {
+        if (e.id == that.playId) {
           // 如果是最后一首，则下一首播放列表第一首
-          let id = i == that.songList.length - 1 ? that.songList[0].id : that.songList[i + 1].id
-          that.handlePlay(id)
-          return true
+          let id =
+            i == that.songList.length - 1
+              ? that.songList[0].id
+              : that.songList[i + 1].id;
+          that.handlePlay(id);
+          return true;
         }
-      })
+      });
     }
   }
 };
@@ -154,10 +196,39 @@ export default {
       }
     }
     .center-wall {
+      position: relative;
       width: 50%;
       height: 100%;
       border-left: 2px solid #ccc;
       border-right: 2px solid #ccc;
+      .bi-box {
+        position: absolute;
+        top: 0px;
+        right: 50%;
+        width: 4rem;
+        margin-right: -2rem;
+        z-index: 3;
+      }
+      .cd-box {
+        position: relative;
+        width: 70%;
+        height: 100%;
+        margin: 0 auto;
+        .cd-bg {
+          position: absolute;
+          top: 3rem;
+          left: 0%;
+          z-index: 2;
+        }
+        .album {
+          width: 70%;
+          border-radius: 50%;
+          position: absolute;
+          top: 22%;
+          left: 15%;
+          z-index: 1;
+        }
+      }
     }
     .comment {
       width: 25%;

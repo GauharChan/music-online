@@ -131,3 +131,6 @@ body {
   font-family: 'PingFangSc-Light', 'PingFang SC', 'STHeitisc-Light';
   box-sizing: border-box;
 }
+img {
+  width: 100%;
+}
