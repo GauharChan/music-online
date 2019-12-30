@@ -53,6 +53,27 @@ export default {
 };
 </script>
 <style lang='less' scoped>
+::-webkit-input-placeholder {
+    color: red;
+    letter-spacing: 1px;
+}
+
+:-moz-placeholder {
+    /* Firefox 18- */
+    color: red;
+    letter-spacing: 1px;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    color: red;
+    letter-spacing: 1px;
+}
+
+:-ms-input-placeholder {
+    color: red;
+    letter-spacing: 1px;
+}
 .input-box {
   width: 15rem;
   height: 2rem;

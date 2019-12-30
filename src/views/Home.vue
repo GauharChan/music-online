@@ -29,7 +29,17 @@
           <img class="album" :src="picUrl" alt />
         </div>
       </div>
-      <div class="comment"></div>
+      <!-- 评论 -->
+      <el-scrollbar view-class="view-box" :native="false" wrap-class="comment">
+        <h3>热门评论</h3>
+        <div class="item flex" v-for="(item, index) in comment" :key="index">
+          <img class="avatar-box" :src="item.user.avatarUrl" alt="头像">
+          <div class="comment-content-box">
+            <div class="comment-title">{{item.user.nickname}}</div>
+            <div class="comment-content">{{item.content}}</div>
+          </div>
+        </div>
+      </el-scrollbar>
     </main>
     <footer>
       <audio ref="audio" autoplay :src="url" controls @ended="handleNext"></audio>
@@ -59,7 +69,8 @@ export default {
       drawer: false,
       direction: "ttb",
       playId: 0,
-      picUrl: require("../assets/default.png")
+      picUrl: require("../assets/default.png"),
+      comment: []
     };
   },
   components: {
@@ -118,7 +129,7 @@ export default {
           }
         })
         .then(res => {
-          console.log(res.data);
+          this.comment = res.data.hotComments
         });
     },
     handleClose(done) {
@@ -233,6 +244,33 @@ export default {
     .comment {
       width: 25%;
       height: 100%;
+      h3{
+        padding: .3rem;
+      }
+      .item{
+        padding: .5rem;
+        .avatar-box{
+          width: 2rem;
+          height: 2rem;
+          border-radius: 50%;
+        }
+        .comment-content-box{
+          flex: 1;
+          padding: .5rem;
+          padding-top: 0;
+          .comment-title{
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: .2rem;
+          }
+          .comment-content{
+            font-size: .6rem;
+            color: #000;
+            line-height: .8rem;
+          }
+        }
+      }
+      
     }
   }
   footer {
