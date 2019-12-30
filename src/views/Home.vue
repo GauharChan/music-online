@@ -19,7 +19,7 @@
           <i class="iconfont icon-PlayIconFilled"></i>
         </div>
       </div>-->
-      <div class="center-wall">
+      <div class="center-wall" :class="{playing: isPlaying}">
         <!-- 封面 -->
         <div class="bi-box">
           <img src="../assets/bi.png" alt />
@@ -33,7 +33,7 @@
       <el-scrollbar view-class="view-box" :native="false" wrap-class="comment">
         <h3>热门评论</h3>
         <div class="item flex" v-for="(item, index) in comment" :key="index">
-          <img class="avatar-box" :src="item.user.avatarUrl" alt="头像">
+          <img class="avatar-box" :src="item.user.avatarUrl" alt="头像" />
           <div class="comment-content-box">
             <div class="comment-title">{{item.user.nickname}}</div>
             <div class="comment-content">{{item.content}}</div>
@@ -42,7 +42,15 @@
       </el-scrollbar>
     </main>
     <footer>
-      <audio ref="audio" autoplay :src="url" controls @ended="handleNext"></audio>
+      <audio
+        ref="audio"
+        autoplay
+        :src="url"
+        controls
+        @ended="handleNext"
+        @play="handleStart"
+        @pause="handlePause"
+      ></audio>
     </footer>
     <!-- 抽屉 -->
     <el-drawer
@@ -64,13 +72,21 @@ export default {
   name: "home",
   data() {
     return {
+      // 歌曲列表
       songList: [],
+      // 歌曲链接
       url: "",
+      // 抽屉
       drawer: false,
       direction: "ttb",
+      // 当前播放歌曲id
       playId: 0,
+      // 专辑封面
       picUrl: require("../assets/default.png"),
-      comment: []
+      // 评论数组
+      comment: [],
+      // 播放中，暂停
+      isPlaying: false
     };
   },
   components: {
@@ -129,7 +145,7 @@ export default {
           }
         })
         .then(res => {
-          this.comment = res.data.hotComments
+          this.comment = res.data.hotComments;
         });
     },
     handleClose(done) {
@@ -151,6 +167,14 @@ export default {
           return true;
         }
       });
+    },
+    // 播放
+    handleStart() {
+      this.isPlaying = true;
+    },
+    // 暂停
+    handlePause() {
+      this.isPlaying = false;
     }
   }
 };
@@ -214,17 +238,21 @@ export default {
       border-right: 2px solid #ccc;
       .bi-box {
         position: absolute;
-        top: 0px;
-        right: 50%;
-        width: 4rem;
+        top: -37px;
+        right: 40%;
+        width: 5rem;
         margin-right: -2rem;
         z-index: 3;
+        transform: rotate(-40deg);
+        transition: all 1s;
       }
       .cd-box {
         position: relative;
         width: 70%;
         height: 100%;
-        margin: 0 auto;
+        margin: 20px auto 0;
+        animation: around 10s infinite linear;
+        animation-play-state: paused;
         .cd-bg {
           position: absolute;
           top: 3rem;
@@ -241,36 +269,63 @@ export default {
         }
       }
     }
+    .playing{
+      .bi-box{
+        top: 0px;
+        right: 43%;
+        transform: rotate(0deg);
+        transition: all 1s;
+      }
+      .cd-box{
+        animation-play-state: running;
+      }
+    }
+    @keyframes around {
+        0%{
+          transform: rotate(0deg);
+        }
+        25%{
+          transform: rotate(90deg);
+        }
+        50%{
+          transform: rotate(180deg);
+        }
+        75%{
+          transform: rotate(270deg);
+        }
+        100%{
+          transform: rotate(360deg);
+        }
+      }
     .comment {
       width: 25%;
       height: 100%;
-      h3{
-        padding: .3rem;
+      h3 {
+        padding: 0.3rem;
       }
-      .item{
-        padding: .5rem;
-        .avatar-box{
+      .item {
+        padding: 0.5rem;
+        .avatar-box {
           width: 2rem;
           height: 2rem;
           border-radius: 50%;
         }
-        .comment-content-box{
+        .comment-content-box {
           flex: 1;
-          padding: .5rem;
+          padding: 0.5rem;
           padding-top: 0;
-          .comment-title{
-            font-size: .8rem;
+          .comment-title {
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: .2rem;
+            margin-bottom: 0.2rem;
           }
-          .comment-content{
-            font-size: .6rem;
+          .comment-content {
+            font-size: 0.6rem;
             color: #000;
-            line-height: .8rem;
+            line-height: 0.8rem;
           }
         }
       }
-      
     }
   }
   footer {
