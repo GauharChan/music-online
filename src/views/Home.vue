@@ -9,7 +9,7 @@
         <div class="item gh-between" v-for="(item, index) in songList" :key="index">
           <i class="iconfont icon-bofang" @click="handlePlay(item.id)"></i>
           <div class="item-text">{{item.name}}-{{item.artists[0].name}}</div>
-          <i class="iconfont icon-PlayIconFilled"></i>
+          <i class="iconfont icon-PlayIconFilled" @click="handleMv(item.mvid)"></i>
         </div>
       </el-scrollbar>
       <!-- <div class="music-list">
@@ -62,6 +62,9 @@
     >
       <div class="tips gh-center">暂时没有该资源！</div>
     </el-drawer>
+    <div class="mv-box" v-show="isMvPlaying" @click="handleCloseMv">
+      <video ref="video" :src="mvUrl" autoplay controls></video>
+    </div>
   </div>
 </template>
 
@@ -86,7 +89,9 @@ export default {
       // 评论数组
       comment: [],
       // 播放中，暂停
-      isPlaying: false
+      isPlaying: false,
+      mvUrl: '',
+      isMvPlaying: false
     };
   },
   components: {
@@ -175,6 +180,37 @@ export default {
     // 暂停
     handlePause() {
       this.isPlaying = false;
+    },
+    handleMv(mvid){
+      this.$axios.get('https://autumnfish.cn/mv/url',{
+        params:{
+          id: mvid
+        }
+      }).then(res => {
+        let url = res.data.data.url
+        this.mvUrl = url
+        // 暂停音乐
+        this.$refs.audio.pause()
+        // 播放mv
+        this.$refs.video.load()
+        this.$refs.video.volume = 0.5;
+        this.isMvPlaying = true
+      })
+    },
+    handleCloseMv(){
+      let that = this
+      this.$confirm('你确定要关闭MV播放吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.isMvPlaying = false
+          that.$refs.video.pause()
+          this.$refs.audio.play()
+        }).catch(() => {
+                  
+        });
+      
     }
   }
 };
@@ -339,6 +375,29 @@ export default {
   }
   .tips {
     height: 100%;
+  }
+  .mv-box{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.8);
+    z-index: 4;
+    video{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 26rem;
+      height: 18rem;
+      margin-top: -9rem;
+      margin-left: -13rem;
+      outline: none;
+      z-index: 6;
+    }
+  }
+  .mvPlaying{
+    display: flex;
   }
 }
 </style>
