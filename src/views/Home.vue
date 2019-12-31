@@ -6,7 +6,7 @@
     </header>
     <main class="flex">
       <el-scrollbar view-class="view-box" :native="false" wrap-class="music-list">
-        <div class="item gh-between" v-for="(item, index) in songList" :key="index">
+        <div class="item gh-between" v-for="(item, index) in songList" :key="index"  @dblclick="handlePlay(item.id)">
           <i class="iconfont icon-bofang" @click="handlePlay(item.id)"></i>
           <div class="item-text">{{item.name}}-{{item.artists[0].name}}</div>
           <i class="iconfont icon-PlayIconFilled" @click="handleMv(item.mvid)"></i>
