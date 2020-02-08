@@ -2,9 +2,11 @@
   <div class="home">
     <header class="gh-between">
       <div class="title">gauhar</div>
+      <!-- 搜索组件 -->
       <Search @getSongList="getSongList" />
     </header>
     <main class="flex">
+      <!-- 左侧歌曲信息 -->
       <el-scrollbar view-class="view-box" :native="false" wrap-class="music-list">
         <div class="item gh-between" v-for="(item, index) in songList" :key="index"  @dblclick="handlePlay(item.id)">
           <i class="iconfont icon-bofang" @click="handlePlay(item.id)"></i>
@@ -19,12 +21,15 @@
           <i class="iconfont icon-PlayIconFilled"></i>
         </div>
       </div>-->
+      <!-- 封面 -->
       <div class="center-wall" :class="{playing: isPlaying}">
-        <!-- 封面 -->
+        <!-- 机械臂 -->
         <div class="bi-box">
           <img src="../assets/bi.png" alt />
         </div>
+        <!-- 专辑图片 -->
         <div class="cd-box">
+          <!-- 黑胶图片 -->
           <img class="cd-bg" src="../assets/center.png" alt />
           <img class="album" :src="picUrl" alt />
         </div>
@@ -42,6 +47,7 @@
       </el-scrollbar>
     </main>
     <footer>
+      <!-- 底部控制栏 -->
       <audio
         ref="audio"
         autoplay
@@ -284,14 +290,14 @@ export default {
       }
       .cd-box {
         position: relative;
-        width: 70%;
+        width: 60%;
         height: 100%;
-        margin: 20px auto 0;
-        animation: around 10s infinite linear;
-        animation-play-state: paused;
+        margin: 9% auto 0;
+        // animation: around 10s infinite linear;
+        // animation-play-state: paused;
         .cd-bg {
           position: absolute;
-          top: 3rem;
+          top: 10%;
           left: 0%;
           z-index: 2;
         }
@@ -299,9 +305,11 @@ export default {
           width: 70%;
           border-radius: 50%;
           position: absolute;
-          top: 22%;
-          left: 15%;
+          top: 21%;
+          left: 16%;
           z-index: 1;
+          animation: around 10s infinite linear;
+          animation-play-state: paused;
         }
       }
     }
@@ -312,8 +320,11 @@ export default {
         transform: rotate(0deg);
         transition: all 1s;
       }
-      .cd-box{
-        animation-play-state: running;
+      // .cd-box{
+      //   animation-play-state: running;
+      // }
+      .album{
+        animation-play-state: running !important;
       }
     }
     @keyframes around {
@@ -398,6 +409,12 @@ export default {
   }
   .mvPlaying{
     display: flex;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .cd-box {
+    margin: 4% auto 0 !important;
   }
 }
 </style>
