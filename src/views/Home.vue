@@ -10,7 +10,7 @@
       <el-scrollbar view-class="view-box" :native="false" wrap-class="music-list">
         <div class="item gh-between" v-for="(item, index) in songList" :key="index"  @dblclick="handlePlay(item.id)">
           <i class="iconfont icon-bofang" @click="handlePlay(item.id)"></i>
-          <div class="item-text">{{item.name}}-{{item.artists[0].name}}</div>
+          <div class="item-text" :class="{redPlaying:item.id === playId}">{{item.name}}-{{item.artists[0].name}}</div>
           <i class="iconfont icon-PlayIconFilled" @click="handleMv(item.mvid)"></i>
         </div>
       </el-scrollbar>
@@ -265,6 +265,10 @@ export default {
         }
         .item-text {
           font-size: 0.7rem;
+        }
+        .redPlaying{
+          color: red;
+          font-weight: 600;
         }
         .icon-PlayIconFilled {
           color: red;
